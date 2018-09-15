@@ -11,7 +11,7 @@ public class WechatModel {
     // 商品名称	商户数据包	手续费	费率
     private Date date;
     private String appId;
-    private String MerId;
+    private String merId;
     private String childMerId;
     private String deviceId;
 
@@ -56,11 +56,11 @@ public class WechatModel {
     }
 
     public String getMerId() {
-        return MerId;
+        return merId;
     }
 
     public void setMerId(String merId) {
-        MerId = merId;
+        merId = merId;
     }
 
     public String getChildMerId() {
@@ -244,7 +244,7 @@ public class WechatModel {
         return "WechatModel{" +
                 "date=" + date +
                 ", appId='" + appId + '\'' +
-                ", MerId='" + MerId + '\'' +
+                ", merId='" + merId + '\'' +
                 ", childMerId='" + childMerId + '\'' +
                 ", deviceId='" + deviceId + '\'' +
                 ", wxTransId='" + wxTransId + '\'' +
