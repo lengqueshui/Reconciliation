@@ -3,6 +3,7 @@ package com.zglc.reconciliation.db;
 
 
 import com.zglc.reconciliation.model.HuifuRechargeModel;
+import com.zglc.reconciliation.model.WechatModel;
 import com.zglc.reconciliation.model.YeepayModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,23 +17,29 @@ public class SqlOperation {
 	private static Logger logger = LoggerFactory.getLogger(SqlOperation.class);
 	
 
-	private static String classname = "com.mysql.jdbc.Driver";
+	private static String classname = "com.mysql.cj.jdbc.Driver";
 	
 
-	private static String url = "jdbc:mysql://39.106.5.215:3306/reconciliation?useUnicode=true&amp;characterEncoding=UTF-8";
+	private static String url = "jdbc:mysql://127.0.0.1:3306/reconciliation?useUnicode=true&characterEncoding=utf8&useSSL=false";
 
 
 	private static String username = "root";
 
 
 	private static String password = "mah123456";
+
+	public static void main(String[] args) {
+		System.out.println("begin");
+		Connection conn = getConnection();
+		System.out.println("conn = " + conn);
+	}
 	
 	public static Connection getConnection() {
 		try {
 			Class.forName(classname);
 			return DriverManager.getConnection(url, username, password);
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			//logger.error(e.getMessage());
 			e.printStackTrace();
 		}
 
@@ -150,7 +157,14 @@ public class SqlOperation {
 			for (int i = 0; i < list.size(); i++) {
 				YeepayModel model = list.get(i);
 				ps.setInt(1, model.getIndex());
-				ps.setTimestamp(2, new java.sql.Timestamp(model.getDate().getTime()));
+				try{
+					ps.setTimestamp(2, new java.sql.Timestamp(model.getDate().getTime()));
+				} catch (Exception e) {
+					e.printStackTrace();
+					ps.setTimestamp(2, new java.sql.Timestamp(System.currentTimeMillis()));
+					System.out.println(model.toString());
+				}
+
 				ps.setString(3, model.getAccountType());
 				ps.setString(4, model.getBusiType());
 				ps.setString(5, model.getMerTransId());
@@ -162,6 +176,60 @@ public class SqlOperation {
 				ps.setString(10, model.getFileName());
 
 				ps.setString(11, model.getRemark());
+				ps.addBatch();
+			}
+
+			ps.executeBatch();
+			con.commit();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	public static void batchWechatPayRechargeInsert(Connection con, List<WechatModel> list) {
+		try {
+			String sql = "INSERT INTO wechatPay_recharge ( oper_date, appId, merId, childMerId, deviceId, " +
+					"wxTransId, merTransId, wxUserNo, type, status, " +
+					"bankNo, ccyNo, amount, hongbaoAmount, wxRefundTransId, " +
+					"merRefundTransId, refundAmount, refundHongbaoAmount, refundType, refundStatus, " +
+					"productName, merDataPackage, fee, feePercent, file_name, create_time)" +
+					"VALUES (?, ?, ?, ?, ?,  ?, ?, ?, ?, ?,  ?, ?, ?, ?, ?,  ?, ?, ?, ?, ?,  ?, ?, ?, ?, ?, NOW())";
+			con.setAutoCommit(false);
+			PreparedStatement ps = con.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE,
+					ResultSet.CONCUR_READ_ONLY);
+			con.setAutoCommit(false);
+
+			for (int i = 0; i < list.size(); i++) {
+				WechatModel model = list.get(i);
+				ps.setTimestamp(1, new java.sql.Timestamp(model.getDate().getTime()));
+				ps.setString(2, model.getAppId());
+				ps.setString(3, model.getMerId());
+				ps.setString(4, model.getChildMerId());
+				ps.setString(5, model.getDeviceId());
+
+				ps.setString(6, model.getWxTransId());
+				ps.setString(7, model.getMerTransId());
+				ps.setString(8, model.getWxUserNo());
+				ps.setString(9, model.getType());
+				ps.setString(10, model.getStatus());
+
+				ps.setString(11, model.getBankNo());
+				ps.setString(12, model.getCcyNo());
+				ps.setLong(13, model.getAmount());
+				ps.setLong(14, model.getHongbaoAmount());
+				ps.setString(15, model.getWxRefundTransId());
+
+				ps.setString(16, model.getMerRefundTransId());
+				ps.setLong(17, model.getRefundAmount());
+				ps.setLong(18, model.getRefundHongbaoAmount());
+				ps.setString(19, model.getRefundType());
+				ps.setString(20, model.getRefundStatus());
+
+				ps.setString(21, model.getProductName());
+				ps.setString(22, model.getMerDataPackage());
+				ps.setLong(23, model.getFee());
+				ps.setString(24, model.getFeePercent());
+				ps.setString(25, model.getFileName());
 				ps.addBatch();
 			}
 

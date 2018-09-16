@@ -37,6 +37,11 @@ public class YeepayModel {
     }
 
     public void setAccountType(String accountType) {
+        if (accountType == null) {
+            this.accountType = "";
+            return;
+        }
+
         this.accountType = accountType;
     }
 

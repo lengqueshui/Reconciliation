@@ -19,7 +19,7 @@ public class YeepaySave {
 
     private static final String CHARSET_NAME = "UTF-8";
 
-    private final static String FILE_PATH = "/Users/mah/Downloads/审计/第三方支付易宝账单汇总/充值数据";
+    private final static String FILE_PATH = "/Users/mah/Downloads/审计/第三方支付易宝账单汇总";
 
     public static void main(String[] args) {
         File rootFile = new File(FILE_PATH);
@@ -39,8 +39,11 @@ public class YeepaySave {
             return;
         }
 
-        System.out.println(file.getAbsolutePath());
-        save(file.getAbsolutePath(), file.getName());
+        if (file.getAbsolutePath().endsWith(".xls")) {
+            System.out.println(file.getAbsolutePath());
+            save(file.getAbsolutePath(), file.getName());
+        }
+
     }
 
 
@@ -57,9 +60,23 @@ public class YeepaySave {
                     //j == 0为序号，序号不为整型则为无效数据(一般标的和title列为无效数据)，不作处理跳过
                     if (j == 0) {
                         try {
-                            Integer.parseInt(value);
+                            if (Integer.parseInt(value) <= 0) {
+                                break;
+                            };
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            //e.printStackTrace();
+                            logger.error(sheet.getCell(j, i).getContents());
+                            break;
+                        }
+                    }
+
+                    if (j == 1) {
+                        try {
+                            if (DateUtil.str2Datetime(value) == null) {
+                                break;
+                            }
+                        } catch (Exception e) {
+                            //e.printStackTrace();
                             logger.error(sheet.getCell(j, i).getContents());
                             break;
                         }
@@ -120,8 +137,10 @@ public class YeepaySave {
                     }
                 }
 
-                yeepayModel.setFileName(fileName);
-                list.add(yeepayModel);
+                if (yeepayModel.getIndex() > 0 && yeepayModel.getDate() != null) {
+                    yeepayModel.setFileName(fileName);
+                    list.add(yeepayModel);
+                }
 
             }
 

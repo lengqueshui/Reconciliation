@@ -60,7 +60,7 @@ public class WechatModel {
     }
 
     public void setMerId(String merId) {
-        merId = merId;
+        this.merId = merId;
     }
 
     public String getChildMerId() {

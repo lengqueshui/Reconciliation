@@ -21,11 +21,11 @@ public class WechatPaySave {
 
     private static final String CHARSET_NAME = "UTF-8";
 
-    private final static String FILE_PATH = "/Users/mah/Downloads/审计/第三方支付微信账单汇总/微信账单/2015年";
+    private final static String FILE_PATH = "/Users/mah/Downloads/审计/第三方支付微信账单汇总/微信账单";
 
     public static void main(String[] args) {
         String fileName = "/Users/mah/Downloads/审计/第三方支付微信账单汇总/微信账单/2015年/微信-交易账单-201512.csv";
-        File rootFile = new File(fileName);
+        File rootFile = new File(FILE_PATH);
         processFileName(rootFile);
     }
 
@@ -48,7 +48,7 @@ public class WechatPaySave {
 
     public static void save(String filePath, String fileName) {
         List<String> list = ReadFile.getListString(filePath, CHARSET_NAME);
-        System.out.println(list.size());
+        Connection con = SqlOperation.getConnection();
 //        交易时间	公众账号ID	商户号	子商户号	设备号
 // 微信订单号	商户订单号	用户标识	交易类型	交易状态	付款银行	货币种类	总金额
 //        企业红包金额	微信退款单号	商户退款单号	退款金额
@@ -158,10 +158,15 @@ public class WechatPaySave {
                 }
             }
 
-            model.setFileName(fileName);
-            modelList.add(model);
+            if (model.getDate() != null) {
+                model.setFileName(fileName);
+                modelList.add(model);
+            }
+
         }
 
+        SqlOperation.batchWechatPayRechargeInsert(con, modelList);
+        SqlOperation.close(con);
         System.out.println(modelList.size());
     }
 
