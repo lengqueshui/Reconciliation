@@ -2,6 +2,7 @@ package com.zglc.reconciliation.save;
 
 import com.zglc.reconciliation.db.SqlOperation;
 import com.zglc.reconciliation.model.YeepayModel;
+import com.zglc.reconciliation.utils.CommonUtil;
 import com.zglc.reconciliation.utils.DateUtil;
 import jxl.Sheet;
 import jxl.Workbook;
@@ -19,7 +20,7 @@ public class YeepaySave {
 
     private static final String CHARSET_NAME = "UTF-8";
 
-    private final static String FILE_PATH = "/Users/mah/Downloads/审计/第三方支付易宝账单汇总";
+    private final static String FILE_PATH = "/Users/mah/Downloads/审计/第三方支付易宝账单汇总/2017年/20171201-20171231.xls";
 
     public static void main(String[] args) {
         File rootFile = new File(FILE_PATH);
@@ -70,24 +71,12 @@ public class YeepaySave {
                         }
                     }
 
-                    if (j == 1) {
-                        try {
-                            if (DateUtil.str2Datetime(value) == null) {
-                                break;
-                            }
-                        } catch (Exception e) {
-                            //e.printStackTrace();
-                            logger.error(sheet.getCell(j, i).getContents());
-                            break;
-                        }
-                    }
-
                     switch (j) {
                         case 0:
                             yeepayModel.setIndex(Integer.parseInt(value));
                             break;
                         case 1:
-                            yeepayModel.setDate(DateUtil.str2Datetime(value));
+                            yeepayModel.setDate(value);
                             break;
                         case 2:
                             yeepayModel.setAccountType(value);
@@ -102,7 +91,7 @@ public class YeepaySave {
                             if (value == null || value.length() == 0) {
                                 yeepayModel.setAmount(0);
                             } else {
-                                yeepayModel.setAmount((long) (Double.parseDouble(value) * 100));
+                                yeepayModel.setAmount(CommonUtil.getAmount(value));
                             }
 
                             break;
@@ -110,7 +99,7 @@ public class YeepaySave {
                             if (value == null || value.length() == 0) {
                                 yeepayModel.setOutAmount(0);
                             } else {
-                                yeepayModel.setOutAmount((long) (Double.parseDouble(value) * 100));
+                                yeepayModel.setOutAmount(CommonUtil.getAmount(value));
                             }
 
 
@@ -119,7 +108,7 @@ public class YeepaySave {
                             if (value == null || value.length() == 0) {
                                 yeepayModel.setFee(0);
                             } else {
-                                yeepayModel.setFee((long) (Double.parseDouble(value) * 100));
+                                yeepayModel.setFee(CommonUtil.getAmount(value));
                             }
 
                             break;
@@ -127,7 +116,7 @@ public class YeepaySave {
                             if (value == null || value.length() == 0) {
                                 yeepayModel.setBalance(0);
                             } else {
-                                yeepayModel.setBalance((long) (Double.parseDouble(value) * 100));
+                                yeepayModel.setBalance(CommonUtil.getAmount(value));
                             }
 
                             break;
@@ -149,6 +138,7 @@ public class YeepaySave {
             e.printStackTrace();
         }
 
+        System.out.println(list.size());
         SqlOperation.batchYeePayRechargeInsert(con, list);
         SqlOperation.close(con);
     }

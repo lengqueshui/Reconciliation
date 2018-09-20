@@ -2,6 +2,7 @@ package com.zglc.reconciliation.save;
 
 import com.zglc.reconciliation.db.SqlOperation;
 import com.zglc.reconciliation.model.HuifuRechargeModel;
+import com.zglc.reconciliation.utils.CommonUtil;
 import com.zglc.reconciliation.utils.DateUtil;
 import com.zglc.reconciliation.utils.ReadFile;
 
@@ -45,7 +46,6 @@ public class huifuSave {
         List<HuifuRechargeModel> modelList = new ArrayList<HuifuRechargeModel>();
         Connection con = SqlOperation.getConnection();
         for (int i = 1; i < list.size(); i++) {
-            //System.out.println(list.get(i));
 
             String s = list.get(i).replace("\"", "");
             String[] a = s.split(",", -1);
@@ -53,14 +53,14 @@ public class huifuSave {
             model.setFileName(fileName);
             model.setMerTransId(a[0]);
             model.setOperDate(DateUtil.str2Date(a[1]));
-            model.setAmount((long) (Double.parseDouble(a[2]) * 100));
+            model.setAmount(CommonUtil.getAmount(a[2]));
             model.setMerUserId(a[3]);
             model.setMerUserName(a[4]);
             model.setBankName(a[5]);
             model.setType(a[6]);
-            model.setFee((long) (Double.parseDouble(a[7]) * 100));
+            model.setFee(CommonUtil.getAmount(a[7]));
             model.setMerFeeId(a[8]);
-            model.setActualAmount((long) (Double.parseDouble(a[9]) * 100));
+            model.setActualAmount(CommonUtil.getAmount(a[9]));
             model.setStatus(a[10]);
             model.setStatusRemark(a[11]);
             model.setFinDate(a[12]);

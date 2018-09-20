@@ -25,7 +25,7 @@ public class WechatPaySave {
 
     public static void main(String[] args) {
         String fileName = "/Users/mah/Downloads/审计/第三方支付微信账单汇总/微信账单/2015年/微信-交易账单-201512.csv";
-        File rootFile = new File(FILE_PATH);
+        File rootFile = new File(fileName);
         processFileName(rootFile);
     }
 
@@ -161,13 +161,17 @@ public class WechatPaySave {
             if (model.getDate() != null) {
                 model.setFileName(fileName);
                 modelList.add(model);
+
+                if (modelList.size() == 500) {
+                    SqlOperation.batchWechatPayRechargeInsert(con, modelList);
+                    modelList = new ArrayList<WechatModel>();
+                }
             }
 
         }
 
         SqlOperation.batchWechatPayRechargeInsert(con, modelList);
         SqlOperation.close(con);
-        System.out.println(modelList.size());
     }
 
 }

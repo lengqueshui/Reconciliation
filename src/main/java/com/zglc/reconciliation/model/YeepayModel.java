@@ -5,7 +5,7 @@ import java.util.Date;
 public class YeepayModel {
 
     private int index;
-    private Date date;
+    private String date;
     private String accountType;
     private String busiType;
     private String merTransId;
@@ -24,11 +24,11 @@ public class YeepayModel {
         this.index = index;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 

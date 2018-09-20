@@ -20,13 +20,15 @@ public class SqlOperation {
 	private static String classname = "com.mysql.cj.jdbc.Driver";
 	
 
-	private static String url = "jdbc:mysql://127.0.0.1:3306/reconciliation?useUnicode=true&characterEncoding=utf8&useSSL=false";
+	//private static String url = "jdbc:mysql://192.168.2.39:3306/reconciliation?useUnicode=true&characterEncoding=utf8&useSSL=false";
+
+	private static String url = "jdbc:mysql://120.26.107.216:3306/zglc_zjcg?useUnicode=true&characterEncoding=utf8&useSSL=false";
 
 
-	private static String username = "root";
+	private static String username = "zglc_zjcg";
 
 
-	private static String password = "mah123456";
+	private static String password = "zglc_zjcg!2017";
 
 	public static void main(String[] args) {
 		System.out.println("begin");
@@ -157,14 +159,7 @@ public class SqlOperation {
 			for (int i = 0; i < list.size(); i++) {
 				YeepayModel model = list.get(i);
 				ps.setInt(1, model.getIndex());
-				try{
-					ps.setTimestamp(2, new java.sql.Timestamp(model.getDate().getTime()));
-				} catch (Exception e) {
-					e.printStackTrace();
-					ps.setTimestamp(2, new java.sql.Timestamp(System.currentTimeMillis()));
-					System.out.println(model.toString());
-				}
-
+				ps.setString(2, model.getDate());
 				ps.setString(3, model.getAccountType());
 				ps.setString(4, model.getBusiType());
 				ps.setString(5, model.getMerTransId());
